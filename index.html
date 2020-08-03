@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>八字算命</title>
+    <!-- common js-css -->
+    <include file="Common/common" />
+    <!-- 表单页通用样式 -->
+    <link rel="stylesheet" href="/App/Miudrive/View/Public/css/table_form.css" />
+    <style>
+        .table td{
+            border-top:none !important;
+        }
+    </style>
+</head>
+<body>
+<div id="content">
+    <a href="/miudrive/bazi/test">fdasfdasfa</a>
+    <form id="frm" action="" method="post" class="form form-horizontal">
+        <div class="col-sm-10" style="text-align: center;margin: 0 auto;">
+            <div class="form-group">
+                <span>姓名：</span>
+                <input name="name" type="text" style="width: 80px;">
+                <span style="margin-left:20px;">公历生日：</span>
+                <span class="input-text">
+                    <input type="number" name="year" min="1900" max="2100" value="1986"><span>年</span>
+                </span>
+                <span class="input-text">
+                    <input type="number" name="month" min="1" max="12" value="6"><span>月</span>
+                </span>
+                <span class="input-text">
+                    <input type="number" name="day" min="1" max="31" value="1"><span>日</span>
+                </span>
+                <span class="input-text">
+                    <input type="number" name="hour" min="0" max="23" value="18"><span>时</span>
+                </span>
+                <span class="input-text">
+                    <input type="number" name="minute" min="0" max="59" value="00"><span>分</span>
+                </span>
+                <span style="margin-left:20px;">性别：</span>
+                <input name="sex" type="radio" value="0" checked>男
+                &nbsp;&nbsp;
+                <input name="sex" type="radio" value="1">女
+                <button type="button" onclick="search();" class="btn btn-submit">查询</button>
+            </div>
+        </div>
+    </form>
+    <table class="table table-hover table-text">
+        <tr>
+            <td colspan="2" id="num"></td>
+            <td colspan="2" id="birthday"></td>
+            <td colspan="2" id="shikongsizhu"></td>
+        </tr>
+        <tr>
+            <td id="shengxiao"></td>
+            <td id="qiyun"></td>
+            <td id="sigong"></td>
+            <td id="wuxing"></td>
+            <td id="nayin"></td>
+
+        </tr>
+        <tr>
+            <td id="taiyuan"></td>
+            <td id="minggong"></td>
+            <td id="shenggong"></td>
+            <td id="calculateLiuqin0"></td>
+            <td id="calculateLiuqin1"></td>
+        </tr>
+
+        <tr id="sizhu_10shen">
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td id="yearGZ"></td>
+            <td id="monthGZ"></td>
+            <td id="dayGZ"></td>
+            <td id="hourGZ"></td>
+            <td id="rikong"></td>
+        </tr>
+        <tr id="bazi">
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+
+    </table>
+    <table class="table table-hover table-text">
+        <tr id="painian">
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr id="qiyun_num">
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr id="qiyun_year">
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr id="qiyun_GZ">
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+    </table>
+    <table class="table table-hover table-text">
+        <tr id="jiuxing">
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+    </table>
+</div>
+<script>
+    function search() {
+        $.ajax({
+            url:'/miudrive/bazi/index',
+            type:'post',
+            data:$('#frm').serialize(),
+            dataType:'json',
+            success:function (data) {
+                console.log(data.data.test);
+                $('#num').text(data.data.num + '字算命');
+                $('#birthday').text(data.data.birthday);
+                $('#shikongsizhu').html('时空四柱：'+data.data.todaysizhu);
+
+                $('#shengxiao').text('生肖：'+data.data.shengxiao);
+                $('#qiyun').html(data.data.qiyun);
+                $('#sigong').text(data.data.sigong);
+                $('#wuxing').text('五行：'+data.data.wuxing);
+
+                $('#nayin').text('纳音：'+data.data.nayin);
+                $('#taiyuan').text('胎元：'+data.data.taiyuan);
+                $('#minggong').text('命宫：'+data.data.minggong);
+                $('#shenggong').html('身宫：'+data.data.shengong);
+                $('#calculateLiuqin0').html('月柱六神：'+data.data.calculateLiuqin[3]);
+                $('#calculateLiuqin1').html('时柱六神：'+data.data.calculateLiuqin[4]);
+
+                //四柱十神
+                $(data.data.sizhu_10shen).each(function (k,v) {
+                    $('#sizhu_10shen td').eq(k).html(v);
+                });
+
+                $('#yearGZ').html(data.data.yearGZ[0]+ '<br/>' +data.data.yearGZ[1]);
+                $('#monthGZ').html(data.data.monthGZ[0]+ '<br/>' +data.data.monthGZ[1]);
+                $('#dayGZ').html(data.data.dayGZ[0]+ '<br/>' +data.data.dayGZ[1]);
+                $('#hourGZ').html(data.data.hourGZ[0]+ '<br/>' +data.data.hourGZ[1]);
+                $('#rikong').html(data.data.bazifenxi);
+                $('#rikong').append('<br/>'+data.data.dayRK);
+
+                //八字纳音
+                $(data.data.bazinayin).each(function (k,v) {
+                    $('#bazi td').eq(k).text(v);
+                });
+                //地支藏干
+                $(data.data.dizhi_CG).each(function (k,v) {
+                    $('#bazi td').eq(k).append('<br/>'+v);
+                });
+                //四柱十二神
+                $(data.data.sizhu_12shen).each(function (k,v) {
+                    $('#bazi td').eq(k).append('<br/>'+v);
+                });
+
+                //起运排年十神
+                $(data.data.painian[0]).each(function (k,v) {
+                    $('#painian td').eq(k).html(v);
+                });
+                //起运排年干
+                $(data.data.painian[1]).each(function (k,v) {
+                    $('#painian td').eq(k).append('<br/>'+v);
+                });
+                //起运排年支
+                $(data.data.painian[2]).each(function (k,v) {
+                    $('#painian td').eq(k).append('<br/>'+v);
+                });
+                //起运排年十二神
+                $(data.data.painian[3]).each(function (k,v) {
+                    $('#painian td').eq(k).append('<br/>('+v+')');
+                });
+                //起运排年纳音
+                $(data.data.painian[4]).each(function (k,v) {
+                    $('#painian td').eq(k).append('<br/>'+v);
+                });
+
+                //起运周年岁数
+                $(data.data.qiyun_num).each(function (k,v) {
+                    $('#qiyun_num td').eq(k).html(v);
+                });
+                //起运周年
+                $(data.data.qiyun_year).each(function (k,v) {
+                    $('#qiyun_year td').eq(k).html(v);
+                });
+                //起运排年
+                $(data.data.q_arr).each(function (k,v) {
+                    $('#qiyun_GZ td').eq(k).html(v);
+                });
+
+                //九星值年十神
+                $(data.data.jiuxing[0]).each(function (k,v) {
+                    $('#jiuxing td').eq(k).html(v);
+                });
+                //九星值年干
+                $(data.data.jiuxing[1]).each(function (k,v) {
+                    $('#jiuxing td').eq(k).append('<br/>'+v);
+                });
+                //九星值年支
+                $(data.data.jiuxing[2]).each(function (k,v) {
+                    $('#jiuxing td').eq(k).append('<br/>'+v);
+                });
+                //九星值年岁
+                $(data.data.jiuxing[3]).each(function (k,v) {
+                    $('#jiuxing td').eq(k).append('<br/>'+v);
+                });
+                //九星值年
+                $(data.data.jiuxing[4]).each(function (k,v) {
+                    $('#jiuxing td').eq(k).append('<br/>'+v);
+                });
+
+            }
+        });
+    }
+</script>
+</body>
+</html>
